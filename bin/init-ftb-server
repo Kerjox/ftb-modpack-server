@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e # Error out immediately on failed line
+set +x # Don't print commands as they are run
+
+
+
+
+
+# Install or update the modpack
+if [[ ! -f start.sh || $FORCE_UPDATE == "true" ]]; then
+    bash install-modpack
+else
+    # Get installed version
+    INSTALLED_VERTION=$(jq '.id' version.json)
+    if [ "$VERSION" -gt "$INSTALLED_VERTION" ]; then
+        echo "⬆️​ Updating from $INSTALLED_VERTION to $VERSION"
+        bash install-modpack
+    fi
+fi
+
+# Set jvm parameters
+# Maximum memory
+if [[ $XMX ]]; then
+    sed -i "/^-Xmx/ { s/.*/-Xmx$XMX/; b }; \$a\\-Xmx$XMX" user_jvm_args.txt
+fi
+
+# Minimum memory
+if [[ $XMS ]]; then
+    sed -i "/^-Xms/ { s/.*/-Xms$XMS/; b }; \$a\\-Xms$XMS" user_jvm_args.txt
+fi
+
+if [[ ! -f eula.txt ]]; then
+    echo "eula=true" > eula.txt
+else
+    sed -i "/^eula=/ { s/=.*/=true/; b }; \$a\\eula=true" eula.txt
+fi
+
+echo "Starting server..."
+bash start.sh

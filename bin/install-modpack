@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e # Error out immediately on failed line
+set +x # Don't print commands as they are run
+
+echo "Looking for version: $VERSION 🔍"
+echo "Looking for packID: $MODPACKID 🔍"
+
+# If we're using the latest version (it's not manually specified)
+# Lookup the latest version available from the API and save it to the version variable
+if [ "$VERSION" == "latest" ]; then
+    VERSION=$(curl -s https://api.modpacks.ch/public/modpack/$MODPACKID/ | jq '.versions[-1].id');
+    args+="--latest"
+fi
+
+echo "Downloading installer..."
+wget -q https://api.modpacks.ch/public/modpack/$MODPACKID/$VERSION/server/linux -P $FTB_SERVER --content-disposition
+chmod +x $FTB_SERVER/serverinstall_"$MODPACKID"_"$VERSION"
+
+echo "Installing modpack..."
+$FTB_SERVER/serverinstall_"$MODPACKID"_"$VERSION" --auto $args 1> /dev/null
+
+# Set jvm args
+sed -i "/^-Dfml.queryResult=/ { s/.*/-Dfml.queryResult=confirm/; b }; \$a\\-Dfml.queryResult=confirm" $FTB_SERVER/user_jvm_args.txt
+
+echo "Modpack installed"
