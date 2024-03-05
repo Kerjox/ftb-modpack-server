@@ -2,8 +2,20 @@
 set -e # Error out immediately on failed line
 set +x # Don't print commands as they are run
 
-
-
+cat <<'EOL'
+ ________  ________  _______          ______                                                    
+|        \|        \|       \        /      \                                                   
+| $$$$$$$$ \$$$$$$$$| $$$$$$$\      |  $$$$$$\  ______    ______  __     __   ______    ______  
+| $$__       | $$   | $$__/ $$      | $$___\$$ /      \  /      \|  \   /  \ /      \  /      \ 
+| $$  \      | $$   | $$    $$       \$$    \ |  $$$$$$\|  $$$$$$\\$$\ /  $$|  $$$$$$\|  $$$$$$\
+| $$$$$      | $$   | $$$$$$$\       _\$$$$$$\| $$    $$| $$   \$$ \$$\  $$ | $$    $$| $$   \$$
+| $$         | $$   | $$__/ $$      |  \__| $$| $$$$$$$$| $$        \$$ $$  | $$$$$$$$| $$      
+| $$         | $$   | $$    $$       \$$    $$ \$$     \| $$         \$$$    \$$     \| $$      
+ \$$          \$$    \$$$$$$$         \$$$$$$   \$$$$$$$ \$$          \$      \$$$$$$$ \$$      
+                                                                                                
+Created by: kerjox                                                                                                
+                                                                                                
+EOL
 
 
 # Install or update the modpack
@@ -21,19 +33,16 @@ fi
 # Set jvm parameters
 # Maximum memory
 if [[ $XMX ]]; then
-    sed -i "/^-Xmx/ { s/.*/-Xmx$XMX/; b }; \$a\\-Xmx$XMX" user_jvm_args.txt
+    sed -i "/^-Xmx/{h;s/.*/-Xmx$XMX/};\${x;/^$/{s//-Xmx$XMX/;H};x}" user_jvm_args.txt
 fi
 
 # Minimum memory
 if [[ $XMS ]]; then
-    sed -i "/^-Xms/ { s/.*/-Xms$XMS/; b }; \$a\\-Xms$XMS" user_jvm_args.txt
+    sed -i "/^-Xms/{h;s/.*/-Xms$XMS/};\${x;/^$/{s//-Xms$XMS/;H};x}" user_jvm_args.txt
 fi
 
 if [[ ! -f eula.txt ]]; then
     echo "eula=true" > eula.txt
 else
-    sed -i "/^eula=/ { s/=.*/=true/; b }; \$a\\eula=true" eula.txt
+    sed -i '/^eula=/{h;s/=.*/=true/};${x;/^$/{s//eula=true/;H};x}' eula.txt
 fi
-
-echo "Starting server..."
-bash start.sh

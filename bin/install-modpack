@@ -20,6 +20,6 @@ echo "Installing modpack..."
 $FTB_SERVER/serverinstall_"$MODPACKID"_"$VERSION" --auto $args 1> /dev/null
 
 # Set jvm args
-sed -i "/^-Dfml.queryResult=/ { s/.*/-Dfml.queryResult=confirm/; b }; \$a\\-Dfml.queryResult=confirm" $FTB_SERVER/user_jvm_args.txt
+sed -i '/^-Dfml.queryResult=/{h;s/=.*/=confirm/};${x;/^$/{s//-Dfml.queryResult=confirm/;H};x}' $FTB_SERVER/user_jvm_args.txt
 
 echo "Modpack installed"

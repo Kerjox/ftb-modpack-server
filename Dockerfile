@@ -14,13 +14,16 @@ apt upgrade -y && \
 apt autoremove -y
 
 # Install requirements
-RUN apt install -y jq wget curl && \
+RUN apt install -y jq wget curl dumb-init && \
 rm -rf /var/lib/apt/lists/*
 
 # Create server directory
 RUN mkdir $FTB_SERVER
 
+STOPSIGNAL SIGTERM
+
 EXPOSE 25565/tcp
 
 WORKDIR $FTB_SERVER
-ENTRYPOINT [ "init-ftb-server" ]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["bash", "-c", "init-ftb-server && exec start-server"]

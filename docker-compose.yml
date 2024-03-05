@@ -3,15 +3,16 @@ services:
   ftb-server:
     build:
       context: .
+    stdin_open: true
+    tty: true
     restart: always
     ports:
       - 25565:25565
     environment:
       - MODPACKID=108
-      #- VERSION=6940
       - VERSION=11697
       - XMX=6G
       - XMS=2G
-      - FORCE_UPDATE=true
+      #- FORCE_UPDATE=true
     volumes:
       - ./ftb-server:/opt/ftb-server
