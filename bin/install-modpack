@@ -13,7 +13,7 @@ if [ "$VERSION" == "latest" ]; then
 fi
 
 echo "Downloading installer..."
-wget -q https://api.modpacks.ch/public/modpack/$MODPACKID/$VERSION/server/linux -O $FTB_SERVER/serverinstall_"$MODPACKID"_"$VERSION" --content-disposition
+wget -q https://api.feed-the-beast.com/v1/modpacks/public/modpack/$MODPACKID/$VERSION/server/linux -O $FTB_SERVER/serverinstall_"$MODPACKID"_"$VERSION" --content-disposition
 chmod +x $FTB_SERVER/serverinstall_"$MODPACKID"_"$VERSION"
 
 echo "Installing modpack..."
